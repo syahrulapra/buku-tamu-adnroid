@@ -36,6 +36,7 @@ public class FormActivity extends AppCompatActivity {
                 final String alamat = etAlamat.getText().toString().trim();
                 final String petugas = etPetugas.getText().toString().trim();
                 final String keterangan = etKeterangan.getText().toString().trim();
+                final String lainnya = "Belum Diterima";
 
                 class TambahData extends AsyncTask<Void, Void, String> {
 
@@ -62,6 +63,7 @@ public class FormActivity extends AppCompatActivity {
                         params.put(Konfigurasi.KEY_ALAMAT, alamat);
                         params.put(Konfigurasi.KEY_PETUGAS, petugas);
                         params.put(Konfigurasi.KEY_KETERANGAN, keterangan);
+                        params.put(Konfigurasi.KEY_LAINNYA, lainnya);
 
                         RequestHandler rh = new RequestHandler();
                         String res = rh.sendPostRequest(Konfigurasi.URL_ADD, params);

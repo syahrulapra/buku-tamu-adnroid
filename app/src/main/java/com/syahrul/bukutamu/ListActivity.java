@@ -9,12 +9,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,34 +21,20 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ListActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class ListActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
 
     private ListView listView;
 
     private String JSON_STRING;
-
-    private String id;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        Intent intent = getIntent();
-        id = intent.getStringExtra(Konfigurasi.TAG_ID);
         listView = (ListView) findViewById(R.id.listView);
         listView.setOnItemClickListener((AdapterView.OnItemClickListener) this);
         getJSON();
-    }
-
-    public String lainnya(String config){
-        if(config == null){
-            return "Belum Diterima";
-        }
-        else{
-            return config;
-        }
     }
 
     private void showData() {
@@ -92,7 +76,7 @@ public class ListActivity extends AppCompatActivity implements AdapterView.OnIte
                         Konfigurasi.TAG_ALAMAT,
                         Konfigurasi.TAG_PETUGAS,
                         Konfigurasi.TAG_KETERANGAN,
-                        lainnya(Konfigurasi.TAG_LAINNYA)},
+                        Konfigurasi.TAG_LAINNYA},
                 new int[]{
                         R.id.id,
                         R.id.nama,
@@ -100,6 +84,7 @@ public class ListActivity extends AppCompatActivity implements AdapterView.OnIte
                         R.id.petugas,
                         R.id.keterangan,
                         R.id.lainnya});
+
         listView.setAdapter(adapter);
     }
 
@@ -134,52 +119,38 @@ public class ListActivity extends AppCompatActivity implements AdapterView.OnIte
         gj.execute();
     }
 
-    //@Override
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(this, EditActivity.class);
         HashMap <String, String> map = (HashMap) parent.getItemAtPosition(position);
-//        String id = map.get(Konfigurasi.TAG_ID).toString();
-        intent.putExtra(Konfigurasi.KEY_NAMA, id);
-        intent.putExtra(Konfigurasi.KEY_ALAMAT, id);
-        intent.putExtra(Konfigurasi.KEY_PETUGAS, id);
-        intent.putExtra(Konfigurasi.KEY_KETERANGAN, id);
-        intent.putExtra(Konfigurasi.KEY_LAINNYA, id);
+        String iddata = map.get(Konfigurasi.TAG_ID).toString();
+        intent.putExtra(Konfigurasi.KEY_ID, iddata);
         startActivity(intent);
         finish();
     }
 
     public void onBackPressed() {
-        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(i);
-        finish();
-    }
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("Apakah Kamu Yakin Ingin Keluar?");
 
-    private void deleteSiswa(){
-        class DeleteSiswa extends AsyncTask<Void,Void,String> {
-            ProgressDialog loading;
+        alertDialogBuilder.setPositiveButton("Logout",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        onBackPressed();
+                        startActivity(new Intent(ListActivity.this, MainActivity.class));
+                    }
+                });
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                loading = ProgressDialog.show(ListActivity.this, "Updating...", "Tunggu...", false, false);
-            }
+        alertDialogBuilder.setNegativeButton("Tidak",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
 
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                loading.dismiss();
-                Toast.makeText(ListActivity.this, s, Toast.LENGTH_LONG).show();
-            }
+                    }
+                });
 
-            @Override
-            protected String doInBackground(Void... params) {
-                RequestHandler rh = new RequestHandler();
-                String s = rh.sendGetRequestParam(Konfigurasi.URL_DELETE, id);
-                return s;
-            }
-        }
-
-        DeleteSiswa de = new DeleteSiswa();
-        de.execute();
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 }

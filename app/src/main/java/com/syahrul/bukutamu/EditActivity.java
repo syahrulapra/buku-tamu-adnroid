@@ -2,6 +2,7 @@ package com.syahrul.bukutamu;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,9 +24,9 @@ import java.util.HashMap;
 
 public class EditActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private Button Terima, Tolak;
+    private Button Terima, Delete;
     private String id;
-    private TextView iddata, etNama, etAlamat, etPetugas, etKeterangan;
+    private TextView iddata, tvNama, tvAlamat, tvPetugas, tvKeterangan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,20 +34,21 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_edit);
 
         Intent intent = getIntent();
+        id = intent.getStringExtra(Konfigurasi.KEY_ID);
 
-        id = intent.getStringExtra(Konfigurasi.TAG_ID);
+        Terima = findViewById(R.id.btnTerima);
+        Delete = findViewById(R.id.btnDelete);
 
-        Terima = (Button) findViewById(R.id.btnTerima);
-        Tolak = (Button) findViewById(R.id.btnTolak);
-
-        iddata = findViewById(R.id.id);
-        etNama = findViewById(R.id.nama);
-        etAlamat = findViewById(R.id.alamat);
-        etPetugas = findViewById(R.id.petugas);
-        etKeterangan = findViewById(R.id.keterangan);
+        iddata = findViewById(R.id.iddata);
+        tvNama = findViewById(R.id.nama);
+        tvAlamat = findViewById(R.id.alamat);
+        tvPetugas = findViewById(R.id.petugas);
+        tvKeterangan = findViewById(R.id.keterangan);
 
         Terima.setOnClickListener(this);
-        Tolak.setOnClickListener(this);
+        Delete.setOnClickListener(this);
+
+        iddata.setText(id);
 
         getSiswa();
     }
@@ -88,18 +90,18 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             String petugas = c.getString(Konfigurasi.TAG_PETUGAS);
             String keterangan = c.getString(Konfigurasi.TAG_KETERANGAN);
 
-            etNama.setText(nama);
-            etAlamat.setText(alamat);
-            etPetugas.setText(petugas);
-            etKeterangan.setText(keterangan);
+            tvNama.setText(nama);
+            tvAlamat.setText(alamat);
+            tvPetugas.setText(petugas);
+            tvKeterangan.setText(keterangan);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void updateSiswa(String status){
-        final String id = iddata.getText().toString().trim();
+    private void updateSiswa(){
+        final String lainnya = "DIterima";
 
         class UpdateSiswa extends AsyncTask<Void,Void,String>{
             ProgressDialog loading;
@@ -120,7 +122,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             protected String doInBackground(Void... params) {
                 HashMap<String,String> hashMap = new HashMap<>();
                 hashMap.put(Konfigurasi.TAG_ID,id);
-                hashMap.put(Konfigurasi.TAG_LAINNYA, status);
+                hashMap.put(Konfigurasi.TAG_LAINNYA, lainnya);
 
                 RequestHandler rh = new RequestHandler();
 
@@ -134,14 +136,69 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         ue.execute();
     }
 
+    private void deleteSiswa(){
+        class DeleteSiswa extends AsyncTask<Void,Void,String> {
+            ProgressDialog loading;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loading = ProgressDialog.show(EditActivity.this, "Updating...", "Tunggu...", false, false);
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                loading.dismiss();
+                Toast.makeText(EditActivity.this, s, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                RequestHandler rh = new RequestHandler();
+                String s = rh.sendGetRequestParam(Konfigurasi.URL_DELETE, id);
+                return s;
+            }
+        }
+
+        DeleteSiswa de = new DeleteSiswa();
+        de.execute();
+    }
+
+    private void confirmDeleteSiswa(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("Apakah Kamu Yakin Ingin Menghapus Data ini?");
+
+        alertDialogBuilder.setPositiveButton("Ya",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        deleteSiswa();
+                        startActivity(new Intent(EditActivity.this,     ListActivity.class));
+                    }
+                });
+
+        alertDialogBuilder.setNegativeButton("Tidak",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
     @Override
     public void onClick(View v) {
         if(v == Terima){
-            updateSiswa("Terima");
+            updateSiswa();
+
         }
 
-        if(v == Tolak){
-            updateSiswa("Tolak");
+        if(v == Delete){
+            confirmDeleteSiswa();
         }
     }
 

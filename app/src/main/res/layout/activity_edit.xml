@@ -19,7 +19,7 @@
             android:layout_margin="10dp">
 
             <TextView
-                android:id="@+id/id"
+                android:id="@+id/iddata"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"/>
@@ -57,32 +57,23 @@
                 android:text="Menawarkan Sponsor"
                 android:maxLines="5"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
                 <Button
                     android:id="@+id/btnTerima"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Terima"
-                    android:backgroundTint="#1BD81E"/>
-
-                <RelativeLayout
-                    android:layout_width="5dp"
-                    android:layout_height="wrap_content"/>
+                    android:backgroundTint="#0F64BD"
+                    android:textColor="#FFF"/>
 
                 <Button
-                    android:id="@+id/btnTolak"
+                    android:id="@+id/btnDelete"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Tolak"
-                    android:backgroundTint="#D51F1F"/>
-
-            </LinearLayout>
+                    android:text="Hapus Data"
+                    android:backgroundTint="#D51F1F"
+                    android:textColor="#FFF"/>
 
         </LinearLayout>
 

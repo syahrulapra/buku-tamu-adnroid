@@ -7,8 +7,9 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:elevation="10dp">
+        android:elevation="10dp"
+        android:layout_marginVertical="10dp"
+        android:layout_marginHorizontal="2dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,15 +60,7 @@
                 android:id="@+id/lainnya"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Belum Diterima"
-                android:textColor="#FF0000"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="delete"
-                android:backgroundTint="#ff0000"
-                android:visibility="gone"/>
+                android:text="Belum Diterima"/>
 
         </LinearLayout>
 
